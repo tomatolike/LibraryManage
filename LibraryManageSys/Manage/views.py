@@ -580,9 +580,12 @@ def card(request):
 	cursor.execute(sql)
 	rows = cursor.fetchall()
 	cardlist = []
+	maxnum = 0
 	for row in rows:
 		newc = ncard()
 		newc.cno = row[0]
+		if row[0] > maxnum:
+			maxnum = row[0]
 		newc.name = row[1]
 		newc.dept = row[2]
 		newc.ty = row[3]
@@ -592,7 +595,7 @@ def card(request):
 	sql = "select name from Manager where mid = "+manager+";"
 	cursor.execute(sql)
 	name = cursor.fetchone()
-	return render(request,'card.html',{'name':name[0],'newest':row[0],'cardlist':cardlist})
+	return render(request,'card.html',{'name':name[0],'newest':maxnum,'cardlist':cardlist})
 
 def addcard(request):
 	if manager == 0:
