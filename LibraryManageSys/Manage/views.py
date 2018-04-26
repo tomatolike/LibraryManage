@@ -34,11 +34,15 @@ class ncard:
 db = MySQLdb.connect("localhost", "root", "1997lk421", "Library", charset='utf8')
 cursor = db.cursor()
 manager = 0
+db.close()
 
 def index(request):
 	return render(request,'index.html')
 
 def login(request):
+	ndb = MySQLdb.connect("localhost", "root", "1997lk421", "Library", charset='utf8')
+	global cursor
+	cursor = ndb.cursor()
 	if 'username' in request.POST:
 		userid = request.POST['username']
 		sql = "select sec from Manager where mid = \""+userid+"\";"
@@ -54,6 +58,12 @@ def login(request):
 				global manager 
 				manager = userid
 				print(manager)
+				ndb.close()
+				global db
+				db = MySQLdb.connect("localhost", "root", "1997lk421", "Library", charset='utf8')
+				global cursor
+				cursor = db.cursor()
+
 				return HttpResponse('<script>alert("登陆成功！");location.replace("/main/");</script>')
 	else :
 		return HttpResponse('<script>alert("请输入管理员id！");location.replace("/");</script>')
@@ -652,6 +662,8 @@ def deletecard(request):
 	return HttpResponse('<script>alert("删除成功！");location.replace("/card/");</script>')
 
 def logout(request):
+	global manager
 	manager = 0
+	db.close()
 	return HttpResponse('<script>alert("退出！");location.replace("/");</script>')
 		
